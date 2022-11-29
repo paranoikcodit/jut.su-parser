@@ -17,10 +17,7 @@ async def main():
 
     jutsu = JutSu(slug)
 
-    try:
-        episodes = await jutsu.get_all_episodes()
-    except Exception as e:
-        print(e)
+    episodes = await jutsu.get_all_episodes()
 
     for episode in episodes:
         print(f"{episode.season} - {episode.name}")

@@ -38,12 +38,12 @@ class JutSu:
 
     async def get_all_episodes(self) -> List[Episode]:
         main_page = await self.client.get(f"{LINK}/{self.slug}")
-        print(await main_page.text())
+        # print(await main_page.text())
 
         soup = BeautifulSoup(await main_page.text(), "html.parser")
 
         episodes = soup.find_all("a", {"class": "short-btn"})
-        print(episodes)
+        # print(episodes)
 
         return [Episode(episode.text, episode.attrs["href"]) for episode in episodes]
 
