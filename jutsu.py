@@ -51,17 +51,19 @@ class JutSu:
         episode_page = await self.client.get(f"{LINK}/{href}")
         soup = BeautifulSoup(await episode_page.text(), "html.parser")
 
-        try:
-            return soup.find("source", {"res": res}).attrs["src"]
-        except Exception:
-            return soup.find("source").attrs["src"]
+        source = soup.find("source", {"res": res})
+        source = source if source else soup.find("source")
+
+        return source.attrs["src"] if source else None
 
 
 async def get_link_and_download(inst: JutSu, episode: Episode, res: str):
     await sleep(randint(1, 5))
 
     link = await inst.get_download_link(episode.href, res)
-    await download_video(link, f"{inst.slug}/{episode.season}/{episode.name}.mp4")
+
+    if link:
+        await download_video(link, f"{inst.slug}/{episode.season}/{episode.name}.mp4")
 
 
 async def download_video(link: str, path: str) -> None:

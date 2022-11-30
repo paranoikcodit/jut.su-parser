@@ -1,6 +1,8 @@
 import asyncio
 from jutsu import JutSu, get_link_and_download
 
+from more_itertools import batched
+
 
 async def main():
     slug = input("Enter the link or name: ")
@@ -19,20 +21,23 @@ async def main():
 
     episodes = await jutsu.get_all_episodes()
 
-    for episode in episodes:
-        print(f"{episode.season} - {episode.name}")
+    crt_eps = sum(ep for ep in episodes if ep.season == "season-1")
 
     coros = [
         asyncio.create_task(get_link_and_download(jutsu, episode, res))
         for episode in episodes
     ]
 
+    coros = batched(coros, crt_eps)
+
     if download_type == "1":
         for coro in coros:
-            await coro
+            for cor in coro:
+                await cor
 
     elif download_type == "2":
-        await asyncio.gather(*coros)
+        for coro in coros:
+            await asyncio.gather(*coros)
 
     await jutsu.close()
 
